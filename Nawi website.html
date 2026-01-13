@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Futuristic HUD Interface</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #03050f;
+      --bg-main: #060b2e;
+      --glass: rgba(255,255,255,0.08);
+      --neon: #00fff7;
+      --neon-soft: rgba(0,255,247,0.35);
+      --text: #eafcff;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, #12215a, transparent 60%),
+        linear-gradient(180deg, var(--bg-main), var(--bg-dark));
+      overflow-x: hidden;
+    }
+
+    /*  Grid Background */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: -1;
+    }
+
+    .page {
+      display: none;
+      padding: 32px;
+      animation: pageIn 0.6s ease;
+    }
+
+    .page.active { display: block; }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1, h2 {
+      color: var(--neon);
+      text-shadow: 0 0 15px var(--neon-soft);
+    }
+
+    /*  Header */
+    .hud-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.6), transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 10;
+    }
+
+    .hud-header span {
+      color: var(--neon);
+      font-size: 0.9rem;
+    }
+
+    /* Buttons */
+    .btn {
+    margin-top: 0;
+      position: relative;
+      padding: 14px 28px;
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 12px;
+      color: var(--text);
+      cursor: pointer;
+      backdrop-filter: blur(14px);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 25px var(--neon-soft);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .center {
+      min-height: calc(100vh - 64px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding-top: 64px;
+    }
+
+    /* Projekte */
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .project-card {
+      background: var(--glass);
+      border-radius: 18px;
+      padding: 22px;
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(18px);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 0 0 35px var(--neon-soft);
+    }
+
+    .project-image {
+      height: 150px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #0e1a36, #15285f);
+      margin-bottom: 16px;
+      animation: pulse 4s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 rgba(0,255,247,0); }
+      50% { box-shadow: 0 0 30px rgba(0,255,247,0.25); }
+      100% { box-shadow: 0 0 0 rgba(0,255,247,0); }
+    }
+
+    /* handy Navigation */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding: 12px 0;
+      justify-content: space-around;
+      z-index: 10;
+    }
+
+    .mobile-nav button {
+      background: none;
+      border: none;
+      color: var(--neon);
+      font-size: 0.8rem;
+    }
+
+    
+    @media (max-width: 768px) {
+      .btn-group { flex-direction: column; }
+      .page { padding: 20px; }
+      .mobile-nav { display: flex; }
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* Zurück-Button Abstand */
+    .back-btn {
+      margin-top: 24px;
+      margin-bottom: 16px;
+      align-self: flex-start;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hud-header">
+    <span>Website von M4-4</span>
+    <span id="time"></span>
+  </div>
+
+  <section id="home" class="page active">
+    <div class="center">
+      <h1>Nawi Website</h1>
+      <p>JavaScript • HTML • CSS</p>
+
+      <div class="btn-group">
+        <button class="btn" onclick="showPage('projects')">Projekte</button>
+        <button class="btn" onclick="showPage('info')">Infos</button>
+        <button class="btn" onclick="showPage('impressum')">Über mich</button>
+      </div>
+    </div>
+  </section>
+   
+  <section id="projects" class="page">
+    <button class="btn back-btn" onclick="showPage('home')">⬅ Startseite</button>
+    <h1>Projekte</h1>
+    <div class="projects">
+      <div class="project-card">
+        <div class="project-image"></div>
+        <h2>Projekt A</h2>
+        <button class="btn">Weiter</button>
+      </div>
+      <div class="project-card">
+        <div class="project-image"></div>
+        <h2>Projekt B</h2>
+        <button class="btn">Weiter</button>
+      </div>
+      <div class="project-card">
+        <div class="project-image"></div>
+        <h2>Projekt C</h2>
+        <button class="btn">Weiter</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="info" class="page">
+    <button class="btn back-btn" onclick="showPage('home')">⬅ Startseite</button>
+    <h1>Infos</h1>
+    <p>Die Website wurde von M4-4 erstellt. <br><br> -diese website wurde für den Nawi untericht erstellt und darf auch nur dafür verwendet werden.
+    <br>
+    <br> -Die website dient als Liste für meine Projekte und soll meine fähigkeiten in HTML, CSS und JavaScript zeigen.<br>
+    <br> -Die website wird ständig erweitert und verbessert.<br>
+    <br> -Bei fragen oder Idean könnt ihr mich gerne uber meinen discord Server kontaktieren. 
+    <br> 
+    </p>
+ 
+ 
+ 
+  </section>
+
+  <section id="impressum" class="page">
+  <button class="btn back-btn" onclick="showPage('home')">⬅ Startseite</button>
+
+  <h1>Impressum</h1>
+  <p>DEIN TEXT</p>
+
+  <button class="btn" onclick="openLink('https://www.spalatin-gymnasium.de/')">
+    Spalatin Homepage
+  </button>
+
+  <button class="btn" onclick="openLink('https://discord.gg/JQAWcuTu')">
+    Discord
+  </button>
+
+  <button class="btn" onclick="openLink('https://github.com/M4-4/Nawi-website')">
+    GitHub
+  </button>
+</section>
+<script>
+  function openLink(url) {
+    window.open(url, "_blank"); // öffnet in neuem Tab
+  }
+</script>
+
+
+  
+
+  <div class="mobile-nav">
+    <button onclick="showPage('home')">HOME</button>
+    <button onclick="showPage('projects')">PROJEKTE</button>
+    <button onclick="showPage('info')">INFOS</button>
+    <button onclick="showPage('impressum')">IMPRESSUM</button>
+  </div>
+
+  <script>
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('time').textContent = now.toLocaleTimeString();
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+  </script>
+
+</body>
+</html>
